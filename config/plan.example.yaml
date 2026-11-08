@@ -1,0 +1,27 @@
+# 비중(%)만 공개합니다. 개인 금액은 앱에서 입력하여 private/plan.yaml에 저장합니다.
+accounts:
+  pension_savings:
+    label: 연금저축
+    P1: {GOLD_INT: 25, SOFR: 20, SPX: 20, MMF: 35}
+    P2: {SPX: 45, UST30: 25, GOLD_INT: 20, MMF: 10}
+  retirement:
+    label: 퇴직연금(IRP·DC)
+    risk_cap: 70
+    P1: {DEPOSIT: 40, USDST: 25, GOLD_INT: 20, SPX: 15}
+    P2: {DEPOSIT: 10, UST30: 20, KTB30: 15, GOLD_INT: 20, SPX: 35}
+  isa:
+    label: ISA
+    P1: {MMF: 40, KTB3: 30, KDIV: 15, WTI: 15}
+    P2: {MMF: 10, KTB30: 25, K200: 35, KDIV: 30}
+  brokerage:
+    label: 위탁
+    P1: {SHORT_KTB_DIRECT: 38, USD_RP: 25, BRKB: 12, MSFT: 12, SEC: 13}
+    P2: {LONG_KTB_DIRECT: 30, BRKB: 15, MSFT: 20, SEC: 20, HYNIX: 15}
+  gold_spot:
+    label: KRX 금현물
+    P1: {KRX_GOLD_SPOT: 100}
+    P2: {KRX_GOLD_SPOT: 100}
+  cash:
+    label: CMA·예금·발행어음
+    P1: {DEPOSIT: 100}
+    P2: {DEPOSIT: 100}

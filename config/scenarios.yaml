@@ -1,0 +1,25 @@
+# 금리·김프는 %p, 나머지 가정은 %. 캐리는 연율 %. 계산 시 소수로 변환합니다.
+horizon: 0.5
+carry:
+  KR_CASH: 3.0
+  DEPOSIT: 3.5
+  USD_CASH: 3.9
+  KR_SHORT_BOND: 3.6
+  KR_LONG_BOND: 3.5
+  US_LONG_BOND_KRW: 5.3
+duration:
+  KTB3: 2.8
+  KTB30: 28.0
+  UST30: 16.3
+  LONG_KTB_DIRECT: 12.0
+  SHORT_KTB_DIRECT: 0.8
+presets:
+  S1:
+    label: S1 스태그 긴축 크래시
+    inputs: {kr_rate: 0.50, us_rate: 0.40, usdkrw: 8, kospi: -25, semi: -35, sp500: -20, gold: -3, wti: 30, premium: 0}
+  S2:
+    label: S2 디플레 크래시
+    inputs: {kr_rate: -0.70, us_rate: -0.80, usdkrw: 10, kospi: -30, semi: -35, sp500: -25, gold: 8, wti: -40, premium: 0}
+  S3:
+    label: S3 연착륙 반등
+    inputs: {kr_rate: -0.25, us_rate: -0.30, usdkrw: -5, kospi: 15, semi: 25, sp500: 10, gold: 0, wti: -10, premium: 0}

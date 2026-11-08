@@ -1,0 +1,18 @@
+# 개인 금액·계좌·보유·인증 정보는 절대 추적하지 않습니다.
+private/
+.env
+.env.*
+!.env.example
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+*.log
+.streamlit/secrets.toml
+# 오프라인 합성 데이터와 실행 모드 표시는 로컬 전용입니다.
+data/demo/
+data/meta/active_dataset.json

@@ -1,0 +1,18 @@
+# 모든 하락률은 양의 크기(%)로 설정합니다. 인상·관측기간은 달력일 기준입니다.
+near_ratio: 0.8
+daily_max_stale_days: 14
+cpi_max_stale_days: 75
+T1:
+  lookback_days: 120
+  max_stale_days: 14
+  max_gap_days: 14
+T2:
+  cpi_declining_months: 3
+  lookback_months: 6
+  oil_drawdown_pct: 20
+T3:
+  kospi_lookback_days: 365
+  kospi_drawdown_pct: 30
+  lookback_months: 6
+  spread_range_pp: 1.5
+  spread_drop_pp: 0.5

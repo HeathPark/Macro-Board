@@ -1,0 +1,30 @@
+# 코드는 반드시 문자열로 유지합니다(앞자리 0·영숫자 신규 코드 보존).
+# 실제 조회 검증 상태는 docs/ASSUMPTIONS.md를 확인하세요.
+universe:
+  - {id: MMF, name: TIGER 머니마켓액티브, code: '0043B0', market: KRX, asset_class: KR_CASH}
+  - {id: CD, name: TIGER CD금리플러스액티브(합성), code: '499660', market: KRX, asset_class: KR_CASH}
+  - {id: KTB3, name: TIGER 국채3년, code: '114820', market: KRX, asset_class: KR_SHORT_BOND}
+  - {id: KTB30, name: TIGER 국고채30년스트립액티브, code: '451530', market: KRX, asset_class: KR_LONG_BOND}
+  - {id: USDST, name: TIGER 미국달러단기채권액티브, code: '329750', market: KRX, asset_class: USD_CASH}
+  - {id: USTB3M, name: TIGER 미국초단기(3개월이하)국채, code: '0046A0', market: KRX, asset_class: USD_CASH}
+  - {id: SOFR, name: KODEX 미국달러SOFR금리액티브(합성), code: '455030', market: KRX, asset_class: USD_CASH}
+  - {id: UST30, name: ACE 미국30년국채액티브, code: '476760', market: KRX, asset_class: US_LONG_BOND_KRW}
+  - {id: GOLD_INT, name: SOL 국제금, code: '0066W0', market: KRX, asset_class: GOLD_KRW}
+  - {id: GOLD_KRX, name: TIGER KRX금현물, code: '0072R0', market: KRX, asset_class: GOLD_KRW}
+  - {id: SPX, name: TIGER 미국S&P500, code: '360750', market: KRX, asset_class: US_EQ_KRW}
+  - {id: K200, name: KODEX 200, code: '069500', market: KRX, asset_class: KR_EQ}
+  - {id: KDIV, name: PLUS 고배당주, code: '161510', market: KRX, asset_class: KR_EQ_DEF}
+  - {id: WTI, name: KODEX WTI원유선물(H), code: '261220', market: KRX, asset_class: OIL}
+  - {id: SEC, name: 삼성전자, code: '005930', market: KRX, asset_class: KR_EQ_SEMI}
+  - {id: HYNIX, name: SK하이닉스, code: '000660', market: KRX, asset_class: KR_EQ_SEMI}
+  - {id: BRKB, name: 버크셔 해서웨이 B, code: BRK-B, market: US, asset_class: US_EQ_USD}
+  - {id: MSFT, name: 마이크로소프트, code: MSFT, market: US, asset_class: US_EQ_USD}
+  - {id: VOO, name: 뱅가드 S&P 500, code: VOO, market: US, asset_class: US_EQ_USD}
+manual:
+  - {id: DEPOSIT, name: 예금·발행어음·CMA, asset_class: DEPOSIT}
+  - {id: SHORT_KTB_DIRECT, name: 저쿠폰 단기 국고채(직접), asset_class: SHORT_KTB_DIRECT}
+  - {id: LONG_KTB_DIRECT, name: 저쿠폰 장기 국고채(직접), asset_class: LONG_KTB_DIRECT}
+  - {id: USD_RP, name: 달러 RP·외화예금, asset_class: USD_CASH}
+  - {id: KRX_GOLD_SPOT, name: KRX 금현물(1g), asset_class: KRX_GOLD_SPOT}
+gold:
+  futures_correction_pct: 0.0

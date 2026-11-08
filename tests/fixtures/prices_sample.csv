@@ -1,0 +1,5 @@
+date,id,close,source
+2022-01-03,SEC,78600,fixture
+2022-01-04,SEC,78700,fixture
+2022-01-03,MSFT,334.75,fixture
+2022-01-04,MSFT,329.01,fixture

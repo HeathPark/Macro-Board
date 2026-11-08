@@ -1,0 +1,38 @@
+name: 시장 데이터 일일 수집
+on:
+  schedule:
+    - cron: '0 8 * * 1-5' # 평일 17:00 한국시간
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: macro-board-daily-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: 저장소 받기
+        uses: actions/checkout@v4
+      - name: Python 준비
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+      - name: 의존성 설치
+        run: python -m pip install -r requirements.txt
+      - name: 공개 시세·매크로 수집
+        env:
+          ECOS_API_KEY: ${{ secrets.ECOS_API_KEY }}
+          FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
+        run: python -m src.update
+      - name: 공개 데이터 변경 사항만 저장
+        run: |
+          git add -- data/
+          if ! git diff --cached --quiet -- data/; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git commit -m 'data: 시장 데이터 일일 갱신' -- data/
+            git push
+          fi
