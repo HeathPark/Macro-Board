@@ -21,10 +21,17 @@ universe:
   - {id: MSFT, name: 마이크로소프트, code: MSFT, market: US, asset_class: US_EQ_USD}
   - {id: VOO, name: 뱅가드 S&P 500, code: VOO, market: US, asset_class: US_EQ_USD}
 manual:
-  - {id: DEPOSIT, name: 예금·발행어음·CMA, asset_class: DEPOSIT}
-  - {id: SHORT_KTB_DIRECT, name: 저쿠폰 단기 국고채(직접), asset_class: SHORT_KTB_DIRECT}
+  - {id: CMA, name: 발행어음형 CMA, asset_class: KR_CASH, rate: 2.85}
+  - {id: NOTE_1Y, name: 퍼스트 발행어음 특판 1년, asset_class: DEPOSIT, rate: 5.10}
+  - {id: DEPOSIT, name: 은행 정기예금, asset_class: DEPOSIT, rate: 3.50}
+  - {id: USD_NOTE, name: 외화 발행어음 수시(USD), asset_class: USD_CASH, rate: 3.75, currency: USD}
   - {id: LONG_KTB_DIRECT, name: 저쿠폰 장기 국고채(직접), asset_class: LONG_KTB_DIRECT}
-  - {id: USD_RP, name: 달러 RP·외화예금, asset_class: USD_CASH}
   - {id: KRX_GOLD_SPOT, name: KRX 금현물(1g), asset_class: KRX_GOLD_SPOT}
+  # 기존 private/plan.yaml의 호환성을 위해 남기며 새 공개 계획에서는 사용하지 않습니다.
+  - {id: SHORT_KTB_DIRECT, name: 저쿠폰 단기 국고채(직접), asset_class: SHORT_KTB_DIRECT}
+  - {id: USD_RP, name: 달러 RP·외화예금, asset_class: USD_CASH}
+retirement_safe_assets: [DEPOSIT, USDST, USTB3M, KTB3, KTB30, UST30, MMF, CD]
+alerts:
+  maturity_days: 30
 gold:
   futures_correction_pct: 0.0

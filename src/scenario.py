@@ -6,12 +6,9 @@ from collections.abc import Mapping
 
 import pandas as pd
 
-from src.portfolio import target_rows
+from src.config import load_config
+from src.portfolio import target_rows, universe_map
 
-DEFAULT_CARRY = {"KR_CASH": 3.0, "DEPOSIT": 3.5, "USD_CASH": 3.9,
-                 "KR_SHORT_BOND": 3.6, "KR_LONG_BOND": 3.5, "US_LONG_BOND_KRW": 5.3}
-DEFAULT_DURATION = {"KTB3": 2.8, "KTB30": 28.0, "UST30": 16.3,
-                    "LONG_KTB_DIRECT": 12.0, "SHORT_KTB_DIRECT": 0.8}
 L1_KEYS = ("kr_rate", "us_rate", "usdkrw", "kospi", "semi", "sp500", "gold", "wti", "premium")
 
 
@@ -20,15 +17,48 @@ def compound(*returns: float) -> float:
     return math.prod(1 + float(value) for value in returns) - 1
 
 
+def _number(value, message: str) -> float:
+    try:
+        result = float(value)
+    except (TypeError, ValueError, OverflowError):
+        raise ValueError(message) from None
+    if isinstance(value, bool) or not math.isfinite(result):
+        raise ValueError(message)
+    return result
+
+
+def _scenario_config(config: Mapping | None) -> dict:
+    """모델의 수치 기본값은 YAML에서 읽고 명시한 부분 설정만 덮어쓴다."""
+    resolved = load_config("scenarios")
+    if config is not None and not isinstance(config, Mapping):
+        raise ValueError("시나리오 설정은 키·값 형식이어야 합니다.")
+    for key, value in (config or {}).items():
+        if key in {"carry", "duration", "equity_beta"}:
+            if not isinstance(value, Mapping) or not isinstance(resolved.get(key), Mapping):
+                raise ValueError("시나리오 금리·듀레이션·민감도 설정 형식을 확인해 주세요.")
+            resolved[key] = {**resolved[key], **value}
+        else:
+            resolved[key] = value
+    return resolved
+
+
+def _inputs(l1: Mapping) -> dict[str, float]:
+    return {key: _number(l1.get(key, l1.get({"usdkrw": "fx", "sp500": "spx"}.get(key, key), 0)),
+                         "시나리오 입력은 유효한 숫자이어야 합니다.") / 100 for key in L1_KEYS}
+
+
 def asset_shocks(l1: Mapping, config: Mapping | None = None) -> dict[str, float]:
-    config = config or {}
-    carry = {**DEFAULT_CARRY, **config.get("carry", {})}
-    duration = {**DEFAULT_DURATION, **config.get("duration", {})}
-    h = float(config.get("horizon", 0.5))
-    inputs = {key: float(l1.get(key, l1.get({"usdkrw": "fx", "sp500": "spx"}.get(key, key), 0))) / 100 for key in L1_KEYS}
-    if not all(math.isfinite(value) for value in inputs.values()) or not math.isfinite(h) or h <= 0:
+    """자산군의 기본 충격. 개별 상품의 금리는 instrument_shocks에서 적용한다."""
+    config = _scenario_config(config)
+    carry = config["carry"]
+    duration = {key: _number(value, "듀레이션은 유효한 숫자이어야 합니다.")
+                for key, value in config["duration"].items()}
+    h = _number(config["horizon"], "시나리오 기간은 유효한 양수이어야 합니다.")
+    inputs = _inputs(l1)
+    if h <= 0 or any(value < 0 for value in duration.values()):
         raise ValueError("시나리오 입력과 기간은 유효한 숫자이어야 합니다.")
-    annual = {key: float(value) / 100 for key, value in carry.items()}
+    annual = {key: _number(value, "캐리 금리는 유효한 숫자이어야 합니다.") / 100
+              for key, value in carry.items()}
     kr, us, fx = inputs["kr_rate"], inputs["us_rate"], inputs["usdkrw"]
     gold = compound(inputs["gold"], fx)
     equity = compound(inputs["sp500"], fx)
@@ -46,17 +76,47 @@ def asset_shocks(l1: Mapping, config: Mapping | None = None) -> dict[str, float]
         "US_EQ_KRW": equity,
         "US_EQ_USD": equity,
         "KR_EQ": inputs["kospi"],
-        "KR_EQ_DEF": inputs["kospi"] * 0.6,
+        "KR_EQ_DEF": inputs["kospi"] * _number(config["equity_beta"]["KR_EQ_DEF"], "주식 민감도는 유효한 숫자이어야 합니다."),
         "KR_EQ_SEMI": inputs["semi"],
         "OIL": inputs["wti"],
     }
 
 
+def instrument_shocks(l1: Mapping, universe: Mapping | list,
+                      config: Mapping | None = None) -> dict[str, float]:
+    """상품별 수익률. 같은 자산군이라도 universe의 rate(연율 %)를 우선한다."""
+    config = _scenario_config(config)
+    shocks = asset_shocks(l1, config)
+    h = _number(config["horizon"], "시나리오 기간은 유효한 양수이어야 합니다.")
+    fx = _inputs(l1)["usdkrw"]
+    carry_classes = {"KR_CASH": "KR_CASH", "DEPOSIT": "DEPOSIT", "USD_CASH": "USD_CASH",
+                     "KR_SHORT_BOND": "KR_SHORT_BOND", "KR_LONG_BOND": "KR_LONG_BOND",
+                     "SHORT_KTB_DIRECT": "KR_SHORT_BOND", "LONG_KTB_DIRECT": "KR_LONG_BOND",
+                     "US_LONG_BOND_KRW": "US_LONG_BOND_KRW"}
+    result = {}
+    for item_id, item in universe_map(universe).items():
+        asset_class = item.get("asset_class")
+        if asset_class not in shocks:
+            raise ValueError("시나리오 자산군이 정의되지 않은 항목이 있습니다.")
+        shock = shocks[asset_class]
+        if "rate" in item:
+            annual = _number(item["rate"], "상품별 금리는 유효한 숫자이어야 합니다.") / 100
+            if asset_class not in carry_classes:
+                raise ValueError("상품별 금리는 캐리 자산군에만 설정할 수 있습니다.")
+            default = _number(config["carry"][carry_classes[asset_class]],
+                              "캐리 금리는 유효한 숫자이어야 합니다.") / 100
+            # 외화 수익률은 캐리와 환율을 곱셈 결합하므로 캐리 차이에도 환율을 적용한다.
+            multiplier = 1 + fx if asset_class in {"USD_CASH", "US_LONG_BOND_KRW"} else 1
+            shock += (annual - default) * h * multiplier
+        result[item_id] = shock
+    return result
+
+
 def simulate_portfolio(plan: Mapping, amounts: Mapping, universe: Mapping | list, l1: Mapping,
                        config: Mapping | None = None, k: int = 0, mode: str = "자동(신호 기반)") -> dict:
     targets = target_rows(plan, amounts, k, mode, universe)
-    shocks = asset_shocks(l1, config)
-    targets["shock"] = targets["asset_class"].map(shocks)
+    shocks = instrument_shocks(l1, universe, config)
+    targets["shock"] = targets["id"].map(shocks)
     if targets["shock"].isna().any():
         raise ValueError("시나리오 자산군이 정의되지 않은 항목이 있습니다.")
     targets["pnl"] = targets["amount"] * targets["shock"]

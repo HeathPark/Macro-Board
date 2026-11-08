@@ -6,7 +6,7 @@ from collections.abc import Mapping
 
 import pandas as pd
 
-SAFE_ASSETS = frozenset({"DEPOSIT", "USDST", "USTB3M", "KTB3", "KTB30", "UST30", "MMF", "CD"})
+from src.config import load_config
 
 
 def blend_weights(account: Mapping, k: int, mode: str = "자동(신호 기반)") -> dict[str, float]:
@@ -32,8 +32,11 @@ def blend_weights(account: Mapping, k: int, mode: str = "자동(신호 기반)")
             if float(p1.get(key, 0)) + (float(p2.get(key, 0)) - float(p1.get(key, 0))) * fraction > 1e-12}
 
 
-def risk_check(weights: Mapping[str, float], cap: float = 70) -> dict:
-    risk = sum(float(value) for key, value in weights.items() if key not in SAFE_ASSETS)
+def risk_check(weights: Mapping[str, float], cap: float | None = None) -> dict:
+    safe_assets = frozenset(load_config("universe")["retirement_safe_assets"])
+    if cap is None:
+        cap = load_config("plan")["accounts"]["retirement"]["risk_cap"]
+    risk = sum(float(value) for key, value in weights.items() if key not in safe_assets)
     return {"risk_weight": risk, "cap": float(cap), "exceeded": risk > float(cap) + 1e-9}
 
 

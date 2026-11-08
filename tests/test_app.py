@@ -1,7 +1,9 @@
 """합성 환경에서 화면·모드 전환·비공개 저장 경계를 검증한다."""
 from pathlib import Path
+from datetime import datetime, timedelta
 import json
 import shutil
+from zoneinfo import ZoneInfo
 
 import pytest
 import yaml
@@ -90,3 +92,46 @@ def test_optional_holdings_tab_handles_missing_quotes(local_app):
     table = app.dataframe[-1].value
     row = table.loc[table["종목"].eq("마이크로소프트")].iloc[0]
     assert row["평가액 (만원)"] != row["평가액 (만원)"]  # 결측은 0으로 대체하지 않는다.
+
+
+def test_optional_maturity_reminder_is_escaped_and_hidden_when_missing(local_app):
+    app = AppTest.from_file(str(APP)).run(timeout=15)
+    assert not app.exception
+    assert not any("만기 확인:" in item.value for item in app.markdown)
+    today = datetime.now(ZoneInfo("Asia/Seoul")).date()
+    private = local_app / "private"
+    private.mkdir()
+    (private / "maturities.csv").write_text(
+        f"item,rate,maturity_date\n<합성 만기>,1,{today.isoformat()}\n"
+        f"합성 먼 만기,1,{(today + timedelta(days=31)).isoformat()}\n", encoding="utf-8")
+    app.run(timeout=15)
+    assert not app.exception
+    reminder = next(item.value for item in app.markdown if "만기 확인:" in item.value)
+    assert "&lt;합성 만기&gt;" in reminder and "오늘 만기" in reminder
+    assert "<합성 만기>" not in reminder
+    assert "합성 먼 만기" not in reminder
+
+
+def test_unexpected_maturity_columns_show_safe_warning(local_app, caplog):
+    private = local_app / "private"
+    private.mkdir()
+    marker = "SYNTHETIC_PRIVATE_MARKER"
+    (private / "maturities.csv").write_text(
+        f"item,rate,maturity_date,amount\n{marker},invalid,invalid,\n", encoding="utf-8")
+    app = AppTest.from_file(str(APP)).run(timeout=15)
+    assert not app.exception
+    assert any("만기 알림: 데이터 없음" in item.value for item in app.warning)
+    assert not any(marker in item.value for item in app.markdown)
+    assert marker not in caplog.text
+
+
+def test_manual_items_and_their_configured_rates_are_visible_in_plan(local_app):
+    app = AppTest.from_file(str(APP)).run(timeout=15)
+    assert not app.exception
+    tables = [item.value for item in app.dataframe if "개별 연 금리 (%)" in item.value]
+    visible = {row["종목"]: row["개별 연 금리 (%)"] for table in tables for _, row in table.iterrows()}
+    items = config.load_config("universe")["manual"]
+    for identifier in ("CMA", "NOTE_1Y", "USD_NOTE"):
+        item = next(row for row in items if row["id"] == identifier)
+        assert visible[item["name"]] == item["rate"]
+    assert any("수동 항목별 금리 반영" in item.value for item in app.markdown)

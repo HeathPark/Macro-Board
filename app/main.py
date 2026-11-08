@@ -19,8 +19,9 @@ from app.components.display import (
     series_for, signed_style,
 )
 from src.config import ROOT, load_config, save_private_plan
+from src.maturities import read_maturities
 from src.portfolio import blend_weights, price_statistics, risk_check, target_rows
-from src.scenario import asset_shocks, historical_2022, simulate_portfolio
+from src.scenario import asset_shocks, historical_2022, instrument_shocks, simulate_portfolio
 from src.signals import evaluate_signals, phase_from_signals
 
 st.set_page_config(page_title="매크로 보드", page_icon="◈", layout="wide",
@@ -198,6 +199,18 @@ with tabs[0]:
                         f'<div class="signal-detail">{html.escape(str(signal["detail"]))}</div></div>',
                         unsafe_allow_html=True)
     todos = []
+    maturity_state = read_maturities(
+        ROOT / "private/maturities.csv",
+        window_days=universe_config.get("alerts", {}).get("maturity_days"),
+    )
+    if maturity_state["present"] and maturity_state["invalid"]:
+        st.warning("만기 알림: 데이터 없음. 만기 파일의 열 이름·금리·날짜 형식을 확인해 주세요.")
+    if maturity_state["items"]:
+        upcoming = []
+        for item in maturity_state["items"]:
+            when = "오늘 만기" if item["days_left"] == 0 else f"{item['days_left']}일 후 만기"
+            upcoming.append(f"{item['item']} · 연 {item['rate']:.2f}% · {item['maturity_date']} ({when})")
+        todos.append("만기 확인: " + " / ".join(upcoming))
     premium = series_for(macro, "KRX_PREMIUM")
     if not premium.empty and premium.iloc[-1] > 3:
         todos.append("김프가 3%를 넘었습니다. 이번 달 금 매수는 SOL 국제금과 비교해 보세요.")
@@ -299,9 +312,12 @@ with tabs[2]:
             section(account.get("label", account_id))
             account_rows = allocations.loc[allocations["account"] == account_id].copy()
             account_rows["name"] = account_rows["id"].map(lambda ident: korean_name(by_id.get(ident, {"id": ident})))
-            display = account_rows[["name", "weight", "amount"]].rename(columns={"name": "종목", "weight": "목표 비중 (%)", "amount": "목표 금액 (만원)"})
+            account_rows["rate"] = account_rows["id"].map(lambda ident: by_id.get(ident, {}).get("rate"))
+            display = account_rows[["name", "weight", "amount", "rate"]].rename(columns={
+                "name": "종목", "weight": "목표 비중 (%)", "amount": "목표 금액 (만원)", "rate": "개별 연 금리 (%)"})
             st.dataframe(display, hide_index=True, width="stretch", column_config={
                 "목표 비중 (%)": st.column_config.NumberColumn(format="%.2f"),
+                "개별 연 금리 (%)": st.column_config.NumberColumn(format="%.2f"),
                 "목표 금액 (만원)": st.column_config.NumberColumn(format="localized")})
             if "risk_cap" in account:
                 check = risk_check(blend_weights(account, k, mode), account["risk_cap"])
@@ -373,6 +389,14 @@ with tabs[3]:
         shock_df = pd.DataFrame({"자산군": [ASSET_LABELS.get(c, c) for c in shocks],
                                  "6개월 수익률": [v * 100 for v in shocks.values()]})
         finance_table(shock_df, percent_columns=["6개월 수익률"])
+        manual_shocks = instrument_shocks(l1, universe_config, scenario_config)
+        manual_rows = [{"종목": korean_name(item), "개별 연 금리": item["rate"],
+                        "6개월 수익률": manual_shocks[item["id"]] * 100}
+                       for item in universe_config.get("manual", []) if "rate" in item]
+        if manual_rows:
+            section("수동 항목별 금리 반영")
+            finance_table(pd.DataFrame(manual_rows), percent_columns=["개별 연 금리", "6개월 수익률"])
+            st.caption("위 자산군 표는 공통 가정입니다. 실제 계획의 손익에는 각 수동 항목에 설정된 개별 금리를 적용하며, 달러 항목은 환율 변화를 곱셈 결합합니다.")
         section("3 · 내 계획에 미치는 영향")
         if result["total_amount"] <= 0:
             st.info("계좌별 금액을 입력하면 전체·계좌별 손익과 기여도가 표시됩니다.")
