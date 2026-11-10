@@ -1,221 +1,221 @@
 {
-  "updated_at": "2026-11-10T03:07:35.527737+09:00",
+  "updated_at": "2026-11-11T00:59:51.814284+09:00",
   "items": [
     {
       "id": "MMF",
       "status": "success",
       "source": "pykrx",
-      "rows": 377,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "CD",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 459,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "KTB3",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "KTB30",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 919,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "USDST",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "USTB3M",
       "status": "success",
       "source": "pykrx",
-      "rows": 372,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "SOFR",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 876,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "UST30",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 647,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "GOLD_INT",
       "status": "success",
       "source": "pykrx",
-      "rows": 342,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "GOLD_KRX",
       "status": "success",
       "source": "pykrx",
-      "rows": 337,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "SPX",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "K200",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "KDIV",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "WTI",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "SEC",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "HYNIX",
       "status": "success",
       "source": "FinanceDataReader",
-      "rows": 1207,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "BRKB",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "MSFT",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "VOO",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "KOSPI",
       "status": "success",
       "source": "yfinance",
-      "rows": 1204,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "KOSDAQ",
       "status": "success",
       "source": "yfinance",
-      "rows": 1204,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "SP500",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "NASDAQ",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "SOX",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "USDKRW",
       "status": "success",
       "source": "yfinance",
-      "rows": 1284,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "DXY",
       "status": "success",
       "source": "yfinance",
-      "rows": 1242,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "GOLD_USD",
       "status": "success",
       "source": "yfinance",
-      "rows": 1243,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "WTI",
       "status": "success",
       "source": "yfinance",
-      "rows": 1242,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "COPPER",
       "status": "success",
       "source": "yfinance",
-      "rows": 1243,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "US10Y",
       "status": "success",
       "source": "yfinance",
-      "rows": 1240,
+      "rows": 1,
       "reason": null
     },
     {
       "id": "VIX",
       "status": "success",
       "source": "yfinance",
-      "rows": 1242,
+      "rows": 1,
       "reason": null
     },
     {
