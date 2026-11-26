@@ -1,9 +1,9 @@
 {
-  "updated_at": "2026-11-26T03:20:55.401902+09:00",
+  "updated_at": "2026-11-27T03:02:13.562436+09:00",
   "mode": "live",
   "status": "partial",
-  "success_count": 31,
-  "failure_count": 1,
+  "success_count": 24,
+  "failure_count": 8,
   "skipped_count": 6,
   "gold_proxy": true
 }
