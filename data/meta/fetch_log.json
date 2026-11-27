@@ -1,5 +1,5 @@
 {
-  "updated_at": "2026-11-27T03:02:13.562436+09:00",
+  "updated_at": "2026-11-28T02:47:01.254531+09:00",
   "items": [
     {
       "id": "MMF",
@@ -115,24 +115,24 @@
     },
     {
       "id": "BRKB",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "MSFT",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "VOO",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "KOSPI",
@@ -150,24 +150,24 @@
     },
     {
       "id": "SP500",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "NASDAQ",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "SOX",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "USDKRW",
@@ -206,10 +206,10 @@
     },
     {
       "id": "US10Y",
-      "status": "failed",
-      "source": null,
-      "rows": 0,
-      "reason": "collection_failed"
+      "status": "success",
+      "source": "yfinance",
+      "rows": 1,
+      "reason": null
     },
     {
       "id": "VIX",
